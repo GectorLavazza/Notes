@@ -2,7 +2,6 @@ import pygame
 from pygame import font
 
 from settings import *
-from datetime import datetime
 
 
 class Ui:
@@ -128,9 +127,21 @@ class Editor(Ui):
         self.cursor_visible = True
         self.cursor_tick = 0
         if self.current_symbol > 0:
-            self.lines[self.current_line] = (self.lines[self.current_line][:self.current_symbol-1] +
-                                             self.lines[self.current_line][self.current_symbol:])
-            self.current_symbol -= 1
+            if line:
+                self.lines[self.current_line] = self.lines[self.current_line][self.current_symbol:]
+                self.current_symbol = 0
+            elif word:
+                space = max(0, self.lines[self.current_line][:self.current_symbol].rfind(' '),
+                            self.lines[self.current_line][:self.current_symbol].rfind('\t'))
+                first, last = self.lines[self.current_line][:space], self.lines[self.current_line][self.current_symbol:]
+                if first.endswith('\t') or first.endswith(' '):
+                    first = first[:-1]
+                self.lines[self.current_line] = (first + last)
+                self.current_symbol = space
+            else:
+                self.lines[self.current_line] = (self.lines[self.current_line][:self.current_symbol-1] +
+                                                 self.lines[self.current_line][self.current_symbol:])
+                self.current_symbol -= 1
         else:
             if self.current_line > 0:
                 self.current_line -= 1

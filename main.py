@@ -30,7 +30,8 @@ def main():
     key_pressed = False
     key_pressed_tick = 0
 
-    cmd_pressed = False
+    ctrl_pressed = False
+    alt_pressed = False
 
     while running:
         dt = time() - last_time
@@ -54,14 +55,16 @@ def main():
                     editor.show_tab = not editor.show_tab
 
                 if event.key == 1073742051:
-                    cmd_pressed = True
+                    ctrl_pressed = True
+                if event.key == 1073742050:
+                    alt_pressed = True
 
-                if cmd_pressed:
+                if ctrl_pressed:
                     if event.key == pygame.K_s:
                         editor.save()
 
                 if event.key == pygame.K_BACKSPACE:
-                    editor.delete(keys[pygame.KMOD_ALT], keys[pygame.KMOD_CTRL])
+                    editor.delete(alt_pressed, ctrl_pressed)
 
                 elif event.key == pygame.K_LEFT:
                     editor.cursor_visible = True
@@ -117,7 +120,7 @@ def main():
                     editor.new_line()
 
                 else:
-                    if not cmd_pressed:
+                    if not ctrl_pressed:
                         symbol = event.unicode
                         if symbol:
                             editor.add(symbol)
@@ -127,7 +130,9 @@ def main():
                 key_pressed_tick = 0
 
                 if event.key == 1073742051:
-                    cmd_pressed = False
+                    ctrl_pressed = False
+                if event.key == 1073742050:
+                    alt_pressed = False
 
         if key_pressed:
             key_pressed_tick += dt
@@ -144,7 +149,6 @@ def main():
         editor.update(dt)
         status_bar.update(dt)
         pygame.display.update(pygame.Rect(0, 0, WIDTH, HEIGHT))
-        # pygame.display.set_caption(f'{(editor.current_line, editor.current_symbol)}')
         clock.tick()
 
     pygame.quit()
