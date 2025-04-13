@@ -8,5 +8,30 @@ This line is super loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
 
 	Btw there's an auto indentation (press [RETURN] anywhere on this line)
 
-Delete that
-Delete THAT or	THAT
+Delete that (use [Command])
+Delete THAT or	THAT (use [Option])
+
+Where do these go?
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+down
+
+Great!
+Now go back

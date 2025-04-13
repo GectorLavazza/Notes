@@ -1,6 +1,8 @@
 from sys import exit
 from time import time
 
+import pygame
+
 from load_image import load_image
 from ui import *
 
@@ -133,6 +135,22 @@ def main():
                     ctrl_pressed = False
                 if event.key == 1073742050:
                     alt_pressed = False
+
+            if event.type == pygame.MOUSEWHEEL:
+                if event.x == -1:
+                    editor.scroll_x += editor.unit_width * dt
+                    editor.scroll_x = min(editor.scroll_x, 0)
+                if event.x == 1:
+                    editor.scroll_x -= editor.unit_width * dt
+                    w = max([s.render.width for s in editor.lines_objects])
+                    editor.scroll_x = max(editor.scroll_x, WIDTH - w - editor.unit_width * 2)
+                if event.y == 1:
+                    editor.scroll_y += editor.unit_height * 2 * dt
+                    editor.scroll_y = min(editor.scroll_y, 0)
+                if event.y == -1:
+                    editor.scroll_y -= editor.unit_height * 2 * dt
+                    if abs(editor.scroll_y) - len(editor.lines) * editor.unit_height * 1.5 > -editor.unit_height * 2:
+                        editor.scroll_y = editor.unit_height * 2 - len(editor.lines) * editor.unit_height * 1.5
 
         if key_pressed:
             key_pressed_tick += dt

@@ -32,7 +32,7 @@ class Text(Ui):
 
         self.surface_width = self.surface.width
 
-    def update(self, message, dt):
+    def update(self, message, dt, scroll_x=0, scroll_y=0):
         if message != self.prev:
             self.surface_width = self.surface.width
 
@@ -55,7 +55,7 @@ class Text(Ui):
         self.surface = pygame.Surface((w, h), pygame.SRCALPHA)
 
         self.surface.blit(self.render)
-        self.screen.blit(self.surface, (x, y))
+        self.screen.blit(self.surface, (x + scroll_x, y + scroll_y))
 
         self.prev = message
 
@@ -71,6 +71,9 @@ class Editor(Ui):
         self.unit_height = self.font.render('a', True, self.color).height
 
         x, y = pos[0] * self.unit_width ** int(unit_pos), pos[1] * self.unit_height ** int(unit_pos)
+
+        self.scroll_x, self.scroll_y = 0, 0
+
         self.pos = x, y
         self.surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
@@ -110,7 +113,6 @@ class Editor(Ui):
         else:
             self.break_line()
 
-
     def break_line(self, msg=''):
         indent = int(self.lines[self.current_line].startswith('\t'))
         self.current_line += 1
@@ -139,7 +141,7 @@ class Editor(Ui):
                 self.lines[self.current_line] = (first + last)
                 self.current_symbol = space
             else:
-                self.lines[self.current_line] = (self.lines[self.current_line][:self.current_symbol-1] +
+                self.lines[self.current_line] = (self.lines[self.current_line][:self.current_symbol - 1] +
                                                  self.lines[self.current_line][self.current_symbol:])
                 self.current_symbol -= 1
         else:
@@ -154,7 +156,8 @@ class Editor(Ui):
 
         for i in range(len(self.lines)):
             line = self.lines[i]
-            self.lines_objects[i].update(line.replace('\t', ('•' if self.show_tab else ' ') * 4), dt)
+            self.lines_objects[i].update(line.replace('\t', ('•' if self.show_tab else ' ') * 4), dt,
+                                         self.scroll_x, self.scroll_y)
 
         self.save_tick += dt
         if self.save_tick >= 60 * 10:
@@ -168,8 +171,8 @@ class Editor(Ui):
 
         if self.cursor_visible:
             tab_count = self.lines[self.current_line][:self.current_symbol].count('\t')
-            self.surface.blit(self.cursor, (self.pos[0] + (self.current_symbol + 3 * tab_count) * self.unit_width,
-                                           self.pos[1] + self.current_line * self.unit_height * 1.5))
+            self.surface.blit(self.cursor, (self.pos[0] + self.scroll_x + (self.current_symbol + 3 * tab_count) * self.unit_width,
+                                            self.pos[1] + self.scroll_y + self.current_line * self.unit_height * 1.5))
 
         self.screen.blit(self.surface)
 
