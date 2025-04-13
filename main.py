@@ -26,7 +26,7 @@ def main():
     last_time = time()
 
     editor = Editor(screen, EDITOR_FONT_SIZE, (1, 1), unit_pos=True)
-    editor.open('my_note.txt')
+    editor.open('my_note')
     status_bar = StatusBar(screen, editor)
 
     key_tick = 0
@@ -43,6 +43,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = 0
+                editor.save()
 
             if event.type == pygame.KEYDOWN:
 

@@ -87,6 +87,10 @@ class Editor(Ui):
         self.cursor_tick = 0
         self.cursor_visible = True
 
+        self.current_file = 'my_note'
+
+        self.save_tick = 0
+
     def add(self, symbol):
         self.cursor_visible = True
         self.cursor_tick = 0
@@ -133,6 +137,11 @@ class Editor(Ui):
             line = self.lines[i]
             self.lines_objects[i].update(line, dt)
 
+        self.save_tick += dt
+        if self.save_tick >= 60 * 10:
+            self.save_tick = 0
+            self.save()
+
         self.cursor_tick += dt
         if self.cursor_tick >= 30:
             self.cursor_tick = 0
@@ -143,7 +152,9 @@ class Editor(Ui):
                                            self.pos[1] + self.current_line * self.unit_height * 1.5))
 
     def open(self, filename):
-        with open(filename) as f:
+        self.current_file = filename
+
+        with open(filename + '.txt') as f:
             data = [s[:-1] for s in f]
 
             self.lines.clear()
@@ -156,6 +167,11 @@ class Editor(Ui):
 
             self.current_symbol = len(self.lines[-1])
             self.current_line = len(self.lines) - 1
+
+    def save(self):
+        with open(self.current_file + '.txt', 'w') as f:
+            for line in self.lines:
+                f.write(line + '\n')
 
 
 class StatusBar(Ui):
