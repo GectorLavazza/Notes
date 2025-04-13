@@ -1,10 +1,7 @@
 from sys import exit
 from time import time
 
-import pygame
-
 from load_image import load_image
-from settings import *
 from ui import *
 
 
@@ -85,8 +82,8 @@ def main():
                     editor.current_symbol += 1
                     if editor.current_symbol > len(editor.lines[editor.current_line]):
                         if editor.current_line < len(editor.lines) - 1:
-                            editor.current_symbol = 0
                             editor.current_line += 1
+                            editor.current_symbol = len(editor.lines[editor.current_line])
                         else:
                             editor.current_symbol = len(editor.lines[editor.current_line])
 

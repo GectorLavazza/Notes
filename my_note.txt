@@ -1,9 +1,11 @@
-this is a test note
-just testing things ya know
+This is a test note.
+Just testing things ya know:)
 
-this line is super loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong
+This line is super loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong
 
 ==CHICKEN JOCKEY==
 
-	This line starts with tab (press F1 to toggle tab view)
-    This starts with 4 spaces
+	This line starts with a tab (press F1 to toggle tab view)
+    but this one starts with 4 spaces
+
+	Btw there's an auto indentation (press RETURN anywhere on this line)

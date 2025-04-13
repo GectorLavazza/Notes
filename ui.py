@@ -92,7 +92,7 @@ class Editor(Ui):
 
         self.save_tick = 0
 
-        self.show_tab = False
+        self.show_tab = True
 
     def add(self, symbol):
         self.cursor_visible = True
@@ -110,16 +110,19 @@ class Editor(Ui):
             self.break_line(last)
         else:
             self.break_line()
-        self.current_symbol = 0
+
 
     def break_line(self, msg=''):
+        indent = int(self.lines[self.current_line].startswith('\t'))
         self.current_line += 1
-        self.lines.insert(self.current_line, msg)
+        self.lines.insert(self.current_line, '\t' * indent + msg)
         text = Text(self.surface, self.font_size,
                     (self.pos[0], self.current_line * self.unit_height * 1.5 + self.pos[1]))
         self.lines_objects.insert(self.current_line, text)
         for i in range(self.current_line + 1, len(self.lines_objects)):
             self.lines_objects[i].pos = (self.pos[0], self.pos[1] + i * self.unit_height * 1.5)
+
+        self.current_symbol = indent
 
     def delete(self, word=False, line=False):
         self.cursor_visible = True
