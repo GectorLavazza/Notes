@@ -138,10 +138,10 @@ def main():
 
             if event.type == pygame.MOUSEWHEEL:
                 if event.x == -1:
-                    editor.scroll_x += editor.unit_width * dt
+                    editor.scroll_x += editor.unit_width * 2 * dt
                     editor.scroll_x = min(editor.scroll_x, 0)
                 if event.x == 1:
-                    editor.scroll_x -= editor.unit_width * dt
+                    editor.scroll_x -= editor.unit_width * 2 * dt
                     w = max([s.render.width for s in editor.lines_objects])
                     editor.scroll_x = max(editor.scroll_x, WIDTH - w - editor.unit_width * 2)
                 if event.y == 1:
