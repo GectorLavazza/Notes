@@ -18,7 +18,7 @@ def main():
     flags = pygame.DOUBLEBUF | pygame.SCALED
     screen = pygame.display.set_mode(screen_size, flags, depth=8, vsync=1)
     pygame.display.set_caption('Notes')
-    pygame.display.set_icon(load_image('logo'))
+    pygame.display.set_icon(load_image('icon_macos'))
 
     running = 1
     clock = pygame.time.Clock()
