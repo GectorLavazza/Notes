@@ -11,7 +11,8 @@ class Ui:
 
 
 class Text(Ui):
-    def __init__(self, screen, font_size, pos, center_align=False, right_align=False, bottom_align=False, vertical_center_align=False):
+    def __init__(self, screen, font_size, pos, center_align=False, right_align=False, bottom_align=False,
+                 vertical_center_align=False):
         super().__init__(screen)
         self.font = font.Font(PATH + 'fonts/PixelOperatorMono8.ttf', font_size)
 
@@ -94,17 +95,6 @@ class Editor(Ui):
                                                                               self.current_symbol + len(symbol) - 1:]
         self.current_symbol += len(symbol)
 
-        line_object = self.lines_objects[self.current_line]
-        if line_object.render.width + line_object.pos[0] >= WIDTH:
-            if ' ' in line:
-                i = line.rfind(' ')
-                first, last = line[:i], line[i + 1:]
-            else:
-                first, last = line[:-1], line[-1]
-            self.lines[self.current_line] = first
-            self.break_line(last)
-            self.current_symbol = len(last)
-
     def new_line(self):
         if self.current_symbol < len(self.lines[self.current_line]):
             first, last = self.lines[self.current_line][:self.current_symbol], self.lines[self.current_line][
@@ -124,7 +114,7 @@ class Editor(Ui):
         for i in range(self.current_line + 1, len(self.lines_objects)):
             self.lines_objects[i].pos = (self.pos[0], self.pos[1] + i * self.unit_height * 1.5)
 
-    def delete(self):
+    def delete(self, word=False, line=False):
         self.cursor_visible = True
         self.cursor_tick = 0
         if self.current_symbol > 0:
@@ -159,11 +149,10 @@ class StatusBar(Ui):
         self.surface = pygame.Surface((WIDTH, self.editor.unit_width * 1.5))
         self.surface.fill(DARKEST_BLACK)
         self.pos = 0, HEIGHT - self.surface.height
-        self.cursor = Text(self.screen, 16, (WIDTH - self.editor.unit_width * 0.5, HEIGHT - 1), bottom_align=True, right_align=True)
-        self.time = Text(self.screen, 16, (self.editor.unit_width * 0.5, HEIGHT - 1), bottom_align=True)
+        self.cursor = Text(self.screen, 16, (WIDTH - self.editor.unit_width * 0.5, HEIGHT - 1), bottom_align=True,
+                           right_align=True)
 
     def update(self, dt):
         self.screen.blit(self.surface, self.pos)
         self.cursor.update(f'{self.editor.current_line + 1}:{self.editor.current_symbol + 1} |'
                            f' {len("".join(self.editor.lines))} chars', dt)
-        self.time.update(f'{datetime.now().strftime("%H:%M")}', dt)

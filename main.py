@@ -28,14 +28,16 @@ def main():
     editor = Editor(screen, EDITOR_FONT_SIZE, (1, 1), unit_pos=True)
     status_bar = StatusBar(screen, editor)
 
-    backspace_tick = 0
-    backspace_pressed = False
-    backspace_pressed_tick = 0
+    key_tick = 0
+    key_pressed = False
+    key_pressed_tick = 0
 
     while running:
         dt = time() - last_time
         dt *= 60
         last_time = time()
+
+        keys = pygame.key.get_pressed()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -43,12 +45,13 @@ def main():
 
             if event.type == pygame.KEYDOWN:
 
+                key_pressed = True
+
                 if event.key == pygame.K_F10:
                     pygame.display.toggle_fullscreen()
 
                 elif event.key == pygame.K_BACKSPACE:
-                    editor.delete()
-                    backspace_pressed = True
+                    editor.delete(keys[pygame.KMOD_ALT], keys[pygame.KMOD_CTRL])
 
                 elif event.key == pygame.K_LEFT:
                     editor.cursor_visible = True
@@ -108,19 +111,17 @@ def main():
                         editor.add(symbol)
 
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_BACKSPACE:
-                    backspace_pressed = False
-                    backspace_pressed_tick = 0
+                key_pressed = False
+                key_pressed_tick = 0
 
-        if backspace_pressed:
-            backspace_pressed_tick += dt
+        if key_pressed:
+            key_pressed_tick += dt
 
-        keys = pygame.key.get_pressed()
-        if backspace_pressed_tick >= 30:
+        if key_pressed_tick >= 30:
             if keys[pygame.K_BACKSPACE]:
-                backspace_tick += dt
-                if backspace_tick >= 4:
-                    backspace_tick = 0
+                key_tick += dt
+                if key_tick >= 4:
+                    key_tick = 0
                     editor.delete()
 
         screen.fill(BLACK)
