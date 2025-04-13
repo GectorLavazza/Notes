@@ -118,7 +118,8 @@ class Editor(Ui):
         self.cursor_visible = True
         self.cursor_tick = 0
         if self.current_symbol > 0:
-            self.lines[self.current_line] = self.lines[self.current_line][:-1]
+            self.lines[self.current_line] = (self.lines[self.current_line][:self.current_symbol-1] +
+                                             self.lines[self.current_line][self.current_symbol:])
             self.current_symbol -= 1
         else:
             if self.current_line > 0:
@@ -140,6 +141,21 @@ class Editor(Ui):
         if self.cursor_visible:
             self.screen.blit(self.cursor, (self.pos[0] + self.current_symbol * self.unit_width,
                                            self.pos[1] + self.current_line * self.unit_height * 1.5))
+
+    def open(self, filename):
+        with open(filename) as f:
+            data = [s[:-1] for s in f]
+
+            self.lines.clear()
+
+            for i in range(len(data)):
+                self.lines.append(data[i])
+                text = Text(self.screen, self.font_size,
+                            (self.pos[0], (i + 1) * self.unit_height * 1.5 + self.pos[1]))
+                self.lines_objects.append(text)
+
+            self.current_symbol = len(self.lines[-1])
+            self.current_line = len(self.lines) - 1
 
 
 class StatusBar(Ui):

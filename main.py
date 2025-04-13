@@ -26,6 +26,7 @@ def main():
     last_time = time()
 
     editor = Editor(screen, EDITOR_FONT_SIZE, (1, 1), unit_pos=True)
+    editor.open('my_note.txt')
     status_bar = StatusBar(screen, editor)
 
     key_tick = 0
