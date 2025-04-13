@@ -73,9 +73,10 @@ class Editor(Ui):
 
         x, y = pos[0] * self.unit_width ** int(unit_pos), pos[1] * self.unit_height ** int(unit_pos)
         self.pos = x, y
+        self.surface = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
 
         self.lines = ['']
-        self.lines_objects = [Text(self.screen, self.font_size, (self.pos[0], self.pos[1]))]
+        self.lines_objects = [Text(self.surface, self.font_size, (self.pos[0], self.pos[1]))]
         self.current_line = 0
         self.current_symbol = 0
 
@@ -112,7 +113,7 @@ class Editor(Ui):
     def break_line(self, msg=''):
         self.current_line += 1
         self.lines.insert(self.current_line, msg)
-        text = Text(self.screen, self.font_size,
+        text = Text(self.surface, self.font_size,
                     (self.pos[0], self.current_line * self.unit_height * 1.5 + self.pos[1]))
         self.lines_objects.insert(self.current_line, text)
         for i in range(self.current_line + 1, len(self.lines_objects)):
@@ -133,6 +134,8 @@ class Editor(Ui):
                 self.lines = self.lines[:self.current_line + 1] + self.lines[self.current_line + 2:]
 
     def update(self, dt):
+        self.surface.fill((0, 0, 0, 0))
+
         for i in range(len(self.lines)):
             line = self.lines[i]
             self.lines_objects[i].update(line, dt)
@@ -148,8 +151,10 @@ class Editor(Ui):
             self.cursor_visible = not self.cursor_visible
 
         if self.cursor_visible:
-            self.screen.blit(self.cursor, (self.pos[0] + self.current_symbol * self.unit_width,
+            self.surface.blit(self.cursor, (self.pos[0] + self.current_symbol * self.unit_width,
                                            self.pos[1] + self.current_line * self.unit_height * 1.5))
+
+        self.screen.blit(self.surface)
 
     def open(self, filename):
         self.current_file = filename
@@ -161,7 +166,7 @@ class Editor(Ui):
 
             for i in range(len(data)):
                 self.lines.append(data[i])
-                text = Text(self.screen, self.font_size,
+                text = Text(self.surface, self.font_size,
                             (self.pos[0], (i + 1) * self.unit_height * 1.5 + self.pos[1]))
                 self.lines_objects.append(text)
 
