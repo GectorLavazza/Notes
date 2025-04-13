@@ -1,6 +1,9 @@
 this is a test note
 just testing things ya know
 
-aakjhfkjsdhgkjsdhgjshdgkjhskgjhsdkjghsdkgjhsdkjghsdkjghskjdhgkjsdhgkjshdgkjsdhgkjhsdkgjhsdg
+this line is super loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong
 
 ==CHICKEN JOCKEY==
+
+	This line starts with tab (press F1 to toggle tab view)
+    This starts with 4 spaces

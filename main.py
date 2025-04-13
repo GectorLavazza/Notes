@@ -33,6 +33,8 @@ def main():
     key_pressed = False
     key_pressed_tick = 0
 
+    cmd_pressed = False
+
     while running:
         dt = time() - last_time
         dt *= 60
@@ -46,13 +48,22 @@ def main():
                 editor.save()
 
             if event.type == pygame.KEYDOWN:
-
                 key_pressed = True
 
                 if event.key == pygame.K_F10:
                     pygame.display.toggle_fullscreen()
 
-                elif event.key == pygame.K_BACKSPACE:
+                if event.key == pygame.K_F1:
+                    editor.show_tab = not editor.show_tab
+
+                if event.key == 1073742051:
+                    cmd_pressed = True
+
+                if cmd_pressed:
+                    if event.key == pygame.K_s:
+                        editor.save()
+
+                if event.key == pygame.K_BACKSPACE:
                     editor.delete(keys[pygame.KMOD_ALT], keys[pygame.KMOD_CTRL])
 
                 elif event.key == pygame.K_LEFT:
@@ -101,6 +112,7 @@ def main():
                     else:
                         editor.current_symbol = min(editor.current_symbol, len(editor.lines[editor.current_line]))
 
+
                 elif event.key == pygame.K_TAB:
                     editor.add(editor.tab)
 
@@ -108,13 +120,17 @@ def main():
                     editor.new_line()
 
                 else:
-                    symbol = event.unicode
-                    if symbol:
-                        editor.add(symbol)
+                    if not cmd_pressed:
+                        symbol = event.unicode
+                        if symbol:
+                            editor.add(symbol)
 
             if event.type == pygame.KEYUP:
                 key_pressed = False
                 key_pressed_tick = 0
+
+                if event.key == 1073742051:
+                    cmd_pressed = False
 
         if key_pressed:
             key_pressed_tick += dt

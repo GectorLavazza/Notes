@@ -80,7 +80,7 @@ class Editor(Ui):
         self.current_line = 0
         self.current_symbol = 0
 
-        self.tab = ' ' * 4
+        self.tab = '\t'
 
         self.cursor = pygame.Surface((4, self.unit_height))
         self.cursor.fill(WHITE)
@@ -91,6 +91,8 @@ class Editor(Ui):
         self.current_file = 'my_note'
 
         self.save_tick = 0
+
+        self.show_tab = False
 
     def add(self, symbol):
         self.cursor_visible = True
@@ -138,7 +140,7 @@ class Editor(Ui):
 
         for i in range(len(self.lines)):
             line = self.lines[i]
-            self.lines_objects[i].update(line, dt)
+            self.lines_objects[i].update(line.replace('\t', ('•' if self.show_tab else ' ') * 4), dt)
 
         self.save_tick += dt
         if self.save_tick >= 60 * 10:
@@ -151,7 +153,8 @@ class Editor(Ui):
             self.cursor_visible = not self.cursor_visible
 
         if self.cursor_visible:
-            self.surface.blit(self.cursor, (self.pos[0] + self.current_symbol * self.unit_width,
+            tab_count = self.lines[self.current_line][:self.current_symbol].count('\t')
+            self.surface.blit(self.cursor, (self.pos[0] + (self.current_symbol + 3 * tab_count) * self.unit_width,
                                            self.pos[1] + self.current_line * self.unit_height * 1.5))
 
         self.screen.blit(self.surface)
