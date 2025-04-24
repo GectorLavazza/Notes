@@ -64,6 +64,11 @@ def main():
                 if ctrl_pressed:
                     if event.key == pygame.K_s:
                         editor.save()
+                    elif event.key == pygame.K_r:
+                        import importlib
+                        import notes.codeRunner
+                        importlib.reload(notes.codeRunner)
+                        print(notes.codeRunner.__code_runner__())
 
                 if event.key == pygame.K_BACKSPACE:
                     editor.delete(alt_pressed, ctrl_pressed)
@@ -116,7 +121,11 @@ def main():
 
 
                 elif event.key == pygame.K_TAB:
-                    editor.add(editor.tab)
+                    if alt_pressed:
+                        if not editor.lines[editor.current_line]:
+                            editor.add(editor.code_sign)
+                    else:
+                        editor.add(editor.tab)
 
                 elif event.key == pygame.K_RETURN:
                     editor.new_line()

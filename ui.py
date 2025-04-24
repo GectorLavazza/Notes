@@ -83,6 +83,7 @@ class Editor(Ui):
         self.current_symbol = 0
 
         self.tab = '\t'
+        self.code_sign = '>>> '
 
         self.cursor = pygame.Surface((4, self.unit_height))
         self.cursor.fill(WHITE)
@@ -114,16 +115,23 @@ class Editor(Ui):
             self.break_line()
 
     def break_line(self, msg=''):
-        indent = int(self.lines[self.current_line].startswith('\t'))
+        code_indent = int(self.lines[self.current_line].startswith(self.code_sign))
+        indent = 0
+        for s in self.lines[self.current_line][(4 * code_indent):]:
+            if s == '\t':
+                indent += 1
+            else:
+                break
+
         self.current_line += 1
-        self.lines.insert(self.current_line, '\t' * indent + msg)
+        self.lines.insert(self.current_line, self.code_sign * code_indent + '\t' * indent + msg)
         text = Text(self.surface, self.font_size,
                     (self.pos[0], self.current_line * self.unit_height * 1.5 + self.pos[1]))
         self.lines_objects.insert(self.current_line, text)
         for i in range(self.current_line + 1, len(self.lines_objects)):
             self.lines_objects[i].pos = (self.pos[0], self.pos[1] + i * self.unit_height * 1.5)
 
-        self.current_symbol = indent
+        self.current_symbol = indent + 4 * code_indent
 
     def delete(self, word=False, line=False):
         self.cursor_visible = True
@@ -191,7 +199,7 @@ class Editor(Ui):
         self.scroll_x = 0
         self.scroll_y = 0
 
-        with open(filename + '.txt') as f:
+        with open('notes/' + filename + '.txt') as f:
             data = [s[:-1] for s in f]
             self.lines.clear()
             self.lines_objects = [Text(self.surface, self.font_size, (self.pos[0], self.pos[1]))]
@@ -206,9 +214,14 @@ class Editor(Ui):
             self.current_line = len(self.lines) - 1
 
     def save(self):
-        with open(self.current_file + '.txt', 'w') as f:
+        with open('notes/' + self.current_file + '.txt', 'w') as f:
             for line in self.lines:
                 f.write(line + '\n')
+        with open('notes/' + 'codeRunner.py', 'w') as f:
+            f.write('def __code_runner__():' + '\n')
+            for line in self.lines:
+                if line.startswith(self.code_sign):
+                    f.write('\t' + line[4:] + '\n')
 
 
 class StatusBar(Ui):
