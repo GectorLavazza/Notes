@@ -12,6 +12,6 @@ Delete that (use [Command])
 Delete THAT or	THAT (use [Option])
 
 There are some commands. You have to type them on a new line.
-    _eval: 2 + 2 =
-    _rev: abcd
-    _bin: 100
+_eval: 2 + 2 = 
+_rev: abcd
+_bin: 100

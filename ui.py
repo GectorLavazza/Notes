@@ -164,30 +164,6 @@ class Editor(Ui):
                         line += str(eval(e))
                     except Exception:
                         pass
-            if line.startswith('_rev:'):
-                e = line[5:]
-                try:
-                    line += f' -> {e[::-1]}'
-                except Exception:
-                    pass
-            if line.startswith('_bin:'):
-                e = line[5:]
-                try:
-                    line += f' -> {bin(int(e))}'
-                except Exception:
-                    pass
-            if line.startswith('_oct:'):
-                e = line[5:]
-                try:
-                    line += f' -> {oct(int(e))}'
-                except Exception:
-                    pass
-            if line.startswith('_hex:'):
-                e = line[5:]
-                try:
-                    line += f' -> {hex(int(e))}'
-                except Exception:
-                    pass
 
             self.lines_objects[i].update(line.replace('\t', ('•' if self.show_tab else ' ') * 4), dt,
                                          self.scroll_x, self.scroll_y)

@@ -56,10 +56,6 @@ def main():
                 if event.key == pygame.K_F1:
                     editor.show_tab = not editor.show_tab
 
-                if event.key == pygame.K_F2:
-                    editor.save()
-                    editor.open('readme')
-
                 if event.key == 1073742051:
                     ctrl_pressed = True
                 if event.key == 1073742050:
