@@ -212,10 +212,13 @@ class Editor(Ui):
     def open(self, filename):
         self.current_file = filename
 
+        self.scroll_x = 0
+        self.scroll_y = 0
+
         with open(filename + '.txt') as f:
             data = [s[:-1] for s in f]
-
             self.lines.clear()
+            self.lines_objects = [Text(self.surface, self.font_size, (self.pos[0], self.pos[1]))]
 
             for i in range(len(data)):
                 self.lines.append(data[i])

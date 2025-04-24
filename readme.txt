@@ -15,5 +15,3 @@ There are some commands. You have to type them on a new line.
     _eval: 2 + 2 =
     _rev: abcd
     _bin: 100
-    _oct: 100
-    _hex: 100
