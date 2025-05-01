@@ -13,7 +13,24 @@ BLACK = (52, 52, 52)
 WHITE = (243, 243, 243)
 DARKEST_BLACK = (35, 35, 35)
 
-from os import path
+TURQUOISE = (0, 255, 255)
+
+from os import path, listdir
 
 PATH = path.dirname(__file__) + '/'
 print(PATH)
+
+FILES = [f[:-3] for f in listdir(PATH) if f.endswith('.py')]
+print(FILES)
+
+PARENTHESES = {
+    '(': '()',
+    '{': '{}',
+    '[': '[]',
+}
+
+CLOSING_PARENTHESES = {
+    ')': '()',
+    '}': '{}',
+    ']': '[]'
+}

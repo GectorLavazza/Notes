@@ -1,6 +1,8 @@
 import pygame
 from pygame import font
 
+import importlib
+
 from settings import *
 
 
@@ -83,7 +85,7 @@ class Editor(Ui):
         self.current_symbol = 0
 
         self.tab = '\t'
-        self.code_sign = '>>> '
+        self.code_sign = '§'
 
         self.cursor = pygame.Surface((4, self.unit_height))
         self.cursor.fill(WHITE)
@@ -97,13 +99,30 @@ class Editor(Ui):
 
         self.show_tab = True
 
+        self.code_res = ''
+
+        self.colored = False
+
     def add(self, symbol):
         self.cursor_visible = True
         self.cursor_tick = 0
         line = self.lines[self.current_line]
-        self.lines[self.current_line] = line[:self.current_symbol] + symbol + line[
-                                                                              self.current_symbol + len(symbol) - 1:]
-        self.current_symbol += len(symbol)
+        s = symbol
+        # if s in PARENTHESES:
+        #     s = PARENTHESES[s]
+        # elif s in CLOSING_PARENTHESES:
+        #     j = ''
+        #     for k in line:
+        #         if k in CLOSING_PARENTHESES[s]:
+        #             j += k
+        #     if self.check_parentheses(j, CLOSING_PARENTHESES[s]):
+        #         print(j)
+        #         s = ''
+
+        # print(line[:self.current_symbol], line[self.current_symbol + len(s) - 1:])
+
+        self.lines[self.current_line] = line[:self.current_symbol] + s + line[self.current_symbol + len(s) - 1:]
+        self.current_symbol += 1
 
     def new_line(self):
         if self.current_symbol < len(self.lines[self.current_line]):
@@ -117,21 +136,23 @@ class Editor(Ui):
     def break_line(self, msg=''):
         code_indent = int(self.lines[self.current_line].startswith(self.code_sign))
         indent = 0
-        for s in self.lines[self.current_line][(4 * code_indent):]:
+        for s in self.lines[self.current_line][code_indent:]:
             if s == '\t':
                 indent += 1
             else:
                 break
 
+        add_tab = int(self.lines[self.current_line].endswith(':') and code_indent)
+        tabs = '\t' * indent + '\t' * add_tab
         self.current_line += 1
-        self.lines.insert(self.current_line, self.code_sign * code_indent + '\t' * indent + msg)
+        self.lines.insert(self.current_line, self.code_sign * code_indent + tabs + msg)
         text = Text(self.surface, self.font_size,
                     (self.pos[0], self.current_line * self.unit_height * 1.5 + self.pos[1]))
         self.lines_objects.insert(self.current_line, text)
         for i in range(self.current_line + 1, len(self.lines_objects)):
             self.lines_objects[i].pos = (self.pos[0], self.pos[1] + i * self.unit_height * 1.5)
 
-        self.current_symbol = indent + 4 * code_indent
+        self.current_symbol = indent + add_tab + code_indent
 
     def delete(self, word=False, line=False):
         self.cursor_visible = True
@@ -159,6 +180,17 @@ class Editor(Ui):
                 self.lines[self.current_line] += self.lines[self.current_line + 1]
                 self.lines = self.lines[:self.current_line + 1] + self.lines[self.current_line + 2:]
 
+    def check_parentheses(self, line, parentheses):
+        counter = 0
+        for ch in line:
+            if ch == parentheses[0]:
+                counter += 1
+            elif ch == parentheses[1]:
+                counter -= 1
+            if counter < 0:
+                return False
+        return counter == 0
+
     def update(self, dt):
         self.surface.fill((0, 0, 0, 0))
 
@@ -173,8 +205,13 @@ class Editor(Ui):
                     except Exception:
                         pass
 
-            self.lines_objects[i].update(line.replace('\t', ('•' if self.show_tab else ' ') * 4), dt,
-                                         self.scroll_x, self.scroll_y)
+            if line.replace('\t', '').startswith(self.code_sign + 'res'):
+                if not any([line.replace('\t', '').startswith(self.code_sign + 'res') for line in self.lines[i + 1:]]):
+                    line += ' -> ' + str(self.code_res)
+
+            render_line = line.replace('\t', ('•' if self.show_tab else ' ') * 4)
+            render_line = render_line.replace(self.code_sign, '>>> ', 1)
+            self.lines_objects[i].update(render_line, dt, self.scroll_x, self.scroll_y)
 
         self.save_tick += dt
         if self.save_tick >= 60 * 10:
@@ -188,7 +225,8 @@ class Editor(Ui):
 
         if self.cursor_visible:
             tab_count = self.lines[self.current_line][:self.current_symbol].count('\t')
-            self.surface.blit(self.cursor, (self.pos[0] + self.scroll_x + (self.current_symbol + 3 * tab_count) * self.unit_width,
+            code = self.lines[self.current_line][:self.current_symbol].startswith(self.code_sign)
+            self.surface.blit(self.cursor, (self.pos[0] + self.scroll_x + (self.current_symbol + 3 * tab_count + code * 3) * self.unit_width,
                                             self.pos[1] + self.scroll_y + self.current_line * self.unit_height * 1.5))
 
         self.screen.blit(self.surface)
@@ -221,7 +259,16 @@ class Editor(Ui):
             f.write('def __code_runner__():' + '\n')
             for line in self.lines:
                 if line.startswith(self.code_sign):
-                    f.write('\t' + line[4:] + '\n')
+                    f.write('\t' + line[1:] + '\n')
+            f.write('\t' + 'return res' + '\n')
+
+    def run_python(self):
+        try:
+            import notes.codeRunner
+            importlib.reload(notes.codeRunner)
+            self.code_res = notes.codeRunner.__code_runner__()
+        except Exception as e:
+            self.code_res = e
 
 
 class StatusBar(Ui):

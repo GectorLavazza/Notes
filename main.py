@@ -56,6 +56,9 @@ def main():
                 if event.key == pygame.K_F1:
                     editor.show_tab = not editor.show_tab
 
+                if event.key == pygame.K_F2:
+                    editor.colored = not editor.colored
+
                 if event.key == 1073742051:
                     ctrl_pressed = True
                 if event.key == 1073742050:
@@ -65,10 +68,8 @@ def main():
                     if event.key == pygame.K_s:
                         editor.save()
                     elif event.key == pygame.K_r:
-                        import importlib
-                        import notes.codeRunner
-                        importlib.reload(notes.codeRunner)
-                        print(notes.codeRunner.__code_runner__())
+                        editor.save()
+                        editor.run_python()
 
                 if event.key == pygame.K_BACKSPACE:
                     editor.delete(alt_pressed, ctrl_pressed)
